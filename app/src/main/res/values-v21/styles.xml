@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android版本5.0以上的-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/mainColor</item>
+        <!-- statusBarColor优先级高于colorPrimaryDark,运行在Android5.0以上,继承colorPrimaryDark-->
+        <item name="android:statusBarColor">@color/mainColor</item>
+        <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
+    </style>
+</resources>

@@ -1,0 +1,105 @@
+项目开发流程:
+1、立项
+2、原型确认
+3、设计图确认
+4、代码开发(程序员)
+    大前端(融合):Android IOS Web开发
+    后台
+    构造UI+编写执行逻辑
+    数据对接(数据库)
+5、项目测试->修改
+6、上线
+
+项目开发过程中涉及到的第三方库:
+RecycleView
+CircleImageView
+AndroidUtilCode(手机号合法校验、等等)
+Glide
+Glide Transformations(高斯模糊、原型、三角形图片)
+Realm(数据库)
+
+项目目录:
+.gradle:gradle版本配置文件
+.idea:当前这台电脑androidstudio开发环境
+app文件:项目资源文件
+    project:一个
+    module:多个
+    libs:jar包
+    src:源代码、配置文件
+    bulid.gradle:app配置文件,版本号,版本,第三方库
+bulid.gradle:通用模块的配置信息
+local.properties:当前sdk配置信息
+settings.gradle:当前project引入的模块
+
+//Task  返回栈
+任务时指在执行特定作业时与用户交互的一系列Activity,这些Activity按照各自的打开顺序排列在堆栈(即返回栈)中
+
+个人中心-->注销用户--->返回键又是个人中心页面,这时候就得使用Intent标识符
+Intent.FLAG_ACTIVITY_CLEAR_TASK
+Intent.FLAG_ACTIVITY_NEW_TASK
+
+Realm:
+1、速度快    2、轻量级
+3、直接在移动设备中运行的数据库
+4、它并没有基于任何的现成数据库
+5、Realm数据库不需要使用sql语句就可以操控它
+6、同时支持java oc swift js .net等开发语言,支持ios 安卓 js Xamarin等平台
+
+Sqlite是基于sql语句的,ORM框架
+
+数据模型
+1,一个模型表示一张表,模型中的字段表示表的列
+2,模型需要继承RealmObject类
+3,模型实时,自动更新
+
+事务
+1,所有会使数据发生变化的操作必须在事务中进行
+2,事务分为同步事务和异步事务两种
+3,两种事务共有三种写法
+
+// Initialize Realm
+Realm.init(context);
+
+// Get a Realm instance for this thread
+Realm realm = Realm.getDefaultInstance();
+//开启事务
+realm.beginTransaction();
+//创建被Realm管理的实例对象,该对象的所有变更都会被直接应用到Realm数据源中
+DynamicRealmObject person = realm.createObject("Person");
+//更新数据
+person.setName("Zhangsan");
+//提交事务:所有的修改数据操作只有在执行提交事务之后,才会被写入到数据库
+realm.commitTransaction();
+//取消事务:取消事务之后,所有对数据的修改都会被取消
+realm.cancelTransaction();
+
+同步事务执行快
+//它会自动处理写入事务的开始和提交,并在错误发生时取消写入事务
+realm.executeTransaction(new Realm.Transaction(){
+    @Override
+    public void execute(Realm realm){
+           User user = realm.createObject(User.class);
+           user.setUserName("zhangsan");
+    }
+});
+异步事务执行块
+realm.executeTransactionAsync(... ...);
+
+引用计数
+内存管理机制,系统将资源(对象,内存,磁盘空间)的被引用次数保存起来,当被引用次数为0时系统将这块资源的内存进行释放的一个过程
+
+Realm实例使用引用计数的方式
+生成的Realm实例需要手动Close
+
+增删改查
+
+增
+insert / insertOrUpdate
+copyToRealm/createObject 获取自动更新的Realm模型
+
+代码编写规范
+了解运行原理重要
+
+Realm数据库
+
+

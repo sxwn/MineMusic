@@ -1,0 +1,79 @@
+Android多线程存在的原因;
+1、系统资源紧张(OOM)
+2、应用架构臃肿(WebView、推送、后台任务)
+3、一些黑科技(进程保活)
+
+Different;
+1、Application生命周期
+2、数据共享失效(对象、单例、回调)
+3、进程间通信(文件、Intent、AIDL)
+
+跨进程通信(IPC)
+进程间通过内核提供的机制完成数据交换,称之为进程间通信(IPC,Inter Process Communication)
+
+Linux跨进程通信方式
+1、管道  匿名和有名管道,半双工
+2、消息队列  内核消息列表  多进程读写,随机查询
+3、信号
+4、共享内存(效率最高,需同步机制)
+5、信号量(计数器、进程间同步、PV操作)
+6、套接字(C/S结构、跨网络通信)
+
+Android跨进程通信核心
+Binder:
+    C/S架构、稳定性好，优于共享内存方式
+    性能较好,数据拷贝次数优于管道、消息队列、Socket
+    安全性高，UID/PID可见
+Binder架构:
+AIDL  AMP--> Java BinderProxy-->Mative：BpBinder-->Kernel:Binder Driver--->Native:BBinder-->Java:Binder->AIDL AMS
+例如:startServies();
+    Activity.startService-->ContextImpl.startService()--->AMSProxy.startServie()--->AMSNative.onTransact();-->AMS.startService();
+
+Android跨进程通信方式:
+AIDL(基于Binder)
+Intent、Messager、Content Provider(AIDL)
+文件共享
+
+AIDL
+定义IPC过程中接口的一种描述语言
+AIDL文件在编译过程中生成接口的实现类,用于IPC通信
+支持基本数据类型,实现Parcelable接口的对象,List,Map
+
+Messager:基于Handler、Message实现
+窜行实时通信
+传输Bundle支持的所有数据类型
+
+AIDL项目实战
+AIDL如何实现IPC？
+in、out、inout、oneway关键字的作用?
+
+项目场景:
+连接服务、消息服务
+
+Log过滤
+MainActivity|RemoteService
+
+关键字:
+in:单向(流向)  主进程流入remote子进程
+void sendMessage(in Message message);
+inout:双向(流向)
+void sendMessage(inout Message message);
+out:单向(流向)  remote子进程流入主进程
+void sendMessage(out Message message);//主进程new的一个空的Message
+
+AIDL总结:
+Binder机制
+
+Messenger实现IPC机制
+源码:
+Messenger实现了Parceable接口
+IMessenger接口
+AIDL
+适合少量的数据传输,不适合并发(频繁的调用sendMessage)
+
+IPC机制
+Binder架构
+
+AIDL实现跨进程通信以及关键字的作用
+Messenger的使用和底层实现
+
