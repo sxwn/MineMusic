@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/marginSize"
         android:onClick="onBackClick"
-        android:src="@mipmap/back" />
+        android:src="@mipmap/no_bar_back" />
 
     <LinearLayout
         android:layout_width="match_parent"

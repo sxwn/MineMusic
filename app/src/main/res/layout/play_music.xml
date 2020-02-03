@@ -37,13 +37,13 @@
 
     </FrameLayout>
 
-    <!-- 指针,资源需替换 -->
+    <!-- 指针-->
     <ImageView
         android:id="@+id/iv_needle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:src="@mipmap/needle"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="25dp"
         />
 </FrameLayout>
