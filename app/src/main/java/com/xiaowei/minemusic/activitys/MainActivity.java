@@ -1,7 +1,9 @@
 package com.xiaowei.minemusic.activitys;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -14,7 +16,12 @@ import com.xiaowei.minemusic.adapters.MusicGridAdapter;
 import com.xiaowei.minemusic.adapters.MusicListAdapter;
 import com.xiaowei.minemusic.helpers.RealmHelp;
 import com.xiaowei.minemusic.models.MusicSourceModel;
+import com.xiaowei.minemusic.updater.AppUpdater;
+import com.xiaowei.minemusic.updater.net.INetCallBack;
+import com.xiaowei.minemusic.updater.net.INetDownLoadCallBack;
 import com.xiaowei.minemusic.views.GridSpaceItemDecoration;
+
+import java.io.File;
 
 public class MainActivity extends BaseActivity {
 
@@ -31,6 +38,22 @@ public class MainActivity extends BaseActivity {
 
         initData();
         initView();
+        checkVersion();
+    }
+
+    private void checkVersion() {
+        AppUpdater.getInstance().getNetManager().get("http://59.110.162.30/app_updater_version.json", new INetCallBack() {
+            @Override
+            public void success(String response) {
+                Log.d("weip",response);
+            }
+
+            @Override
+            public void failed(Throwable throwable) {
+                throwable.printStackTrace();
+                Toast.makeText(MainActivity.this, "版本更新接口请求失败", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initData () {

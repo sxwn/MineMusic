@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">res.lgdsunday.club</domain>
+        <domain includeSubdomains="true"><res class="lgdsun"></res>day.club
+        </domain>
     </domain-config>
+    <!--
+        <base-config cleartextTrafficPermitted="true">
+
+        </base-config>-->
 </network-security-config>
