@@ -1,6 +1,7 @@
 package com.xiaowei.minemusic.updater.net;
 
 import android.os.Handler;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class OkHttpNetManager implements INetManager {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e("weip", e.getMessage()+e.getLocalizedMessage());
 //                非 UI线程
                 sHandler.post(new Runnable() {
                     @Override
