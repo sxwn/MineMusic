@@ -50,7 +50,7 @@ public class OkHttpNetManager implements INetManager {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    String string = request.body().toString();
+                    String string = response.body().string();
                     sHandler.post(new Runnable() {
                         @Override
                         public void run() {
