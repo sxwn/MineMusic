@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.xiaowei.minemusic.R;
 import com.xiaowei.minemusic.adapters.MusicGridAdapter;
 import com.xiaowei.minemusic.adapters.MusicListAdapter;
+import com.xiaowei.minemusic.entity.DownloadBean;
 import com.xiaowei.minemusic.helpers.RealmHelp;
 import com.xiaowei.minemusic.models.MusicSourceModel;
 import com.xiaowei.minemusic.updater.AppUpdater;
 import com.xiaowei.minemusic.updater.net.INetCallBack;
 import com.xiaowei.minemusic.updater.net.INetDownLoadCallBack;
+import com.xiaowei.minemusic.updater.ui.UpdateVersionShowDialog;
+import com.xiaowei.minemusic.utils.AppUtils;
 import com.xiaowei.minemusic.views.GridSpaceItemDecoration;
 
 import java.io.File;
@@ -59,22 +62,29 @@ public class MainActivity extends BaseActivity {
 //                如果需要更新
 //                3、弹框
 //                4、点击下载
-                AppUpdater.getInstance().getNetManager().download("", null, new INetDownLoadCallBack() {
-                    @Override
-                    public void success(File apkFile) {
-//                        安装的代码
-                    }
 
-                    @Override
-                    public void progress(int progress) {
-//
-                    }
+                DownloadBean bean = DownloadBean.parse(response);
 
-                    @Override
-                    public void failure() {
+                if (bean == null) {
+                    Toast.makeText(MainActivity.this, "版本检测接口返回数据异常", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+//                检测：是否需要弹框
+                try {
+                    long versionCode = Long.parseLong(bean.versionCode);
+                    if (versionCode <= AppUtils.getVersionCode(MainActivity.this)) {
+                        Toast.makeText(MainActivity.this, "已经是最新版本，无需更新", Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "版本检测接口返回版本号异常", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+//                弹框
+                UpdateVersionShowDialog.show(MainActivity.this, bean);
             }
 
             @Override

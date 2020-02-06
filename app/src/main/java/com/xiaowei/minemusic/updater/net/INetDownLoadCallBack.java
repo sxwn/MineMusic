@@ -8,6 +8,6 @@ public interface INetDownLoadCallBack {
 
     void progress(int progress);
 
-    void failure();
+    void failed(Throwable throwable);
 
 }
