@@ -37,7 +37,7 @@ public class AppUtils {
         Uri uri = null;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".fileProvider", apkFile);
+            uri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".fileprovider", apkFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         } else {

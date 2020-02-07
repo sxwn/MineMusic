@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity {
                 }
 
 //                弹框
-                UpdateVersionShowDialog.show(MainActivity.this, bean);
+//                UpdateVersionShowDialog.show(MainActivity.this, bean);
             }
 
             @Override

@@ -1,6 +1,9 @@
 package com.xiaowei.minemusic;
 
 import android.app.Application;
+import android.content.Context;
+
+import androidx.multidex.MultiDex;
 
 import com.blankj.utilcode.util.Utils;
 import com.xiaowei.minemusic.helpers.RealmHelp;
@@ -18,4 +21,5 @@ public class MyApplication extends Application {
 
         RealmHelp.magration();
     }
+
 }
