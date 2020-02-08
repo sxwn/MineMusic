@@ -1,5 +1,6 @@
 package com.xiaowei.minemusic.updater.ui;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,7 +18,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.xiaowei.minemusic.R;
-import com.xiaowei.minemusic.activitys.MainActivity;
 import com.xiaowei.minemusic.entity.DownloadBean;
 import com.xiaowei.minemusic.updater.AppUpdater;
 import com.xiaowei.minemusic.updater.net.INetDownLoadCallBack;
@@ -76,8 +76,16 @@ public class UpdateVersionShowDialog extends DialogFragment {
                         Log.d("weip", "success = " + apkFile.getAbsolutePath());
 
                         dismiss();
-//                      checkMd5
-                        AppUtils.installApk(getActivity(), apkFile);
+
+                        String fileMd5 = AppUtils.getFileMd5(targetFile);
+                        Log.d("weip", "md5 = " + fileMd5);
+
+                        if (fileMd5 != null && fileMd5.equals(mDownloadBean.md5)) {
+//                            checkMd5
+                            AppUtils.installApk(getActivity(), apkFile);
+                        } else {
+                            Toast.makeText(getActivity(), "md5 检测失败", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
@@ -90,11 +98,18 @@ public class UpdateVersionShowDialog extends DialogFragment {
                     @Override
                     public void failed(Throwable throwable) {
                         v.setEnabled(true);
+
                         Toast.makeText(getActivity(), "文件下载失败", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }, UpdateVersionShowDialog.this);
             }
         });
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        AppUpdater.getInstance().getNetManager().cacel(this);
     }
 
     public static void show(FragmentActivity activity, DownloadBean bean) {

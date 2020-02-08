@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -31,10 +32,10 @@ public class OkHttpNetManager implements INetManager {
     }
 
     @Override
-    public void get(String url, INetCallBack callBack) {
+    public void get(String url, INetCallBack callBack, Object tag) {
 //     requestbuilder  --->Request --->Call --->execute/enqueue
         Request.Builder builder = new Request.Builder();
-        Request request = builder.url(url).get().build();
+        Request request = builder.url(url).get().tag(tag).build();
         Call call = sOkHttpClient.newCall(request);
 //        Response execute = call.execute();
         call.enqueue(new Callback() {
@@ -69,14 +70,14 @@ public class OkHttpNetManager implements INetManager {
     }
 
     @Override
-    public void download(String url, File targetFile, INetDownLoadCallBack callBack) {
+    public void download(String url, File targetFile, INetDownLoadCallBack callBack, Object tag) {
 
         if (!targetFile.exists()) {
             targetFile.getParentFile().mkdirs();
         }
 
         Request.Builder builder = new Request.Builder();
-        Request request = builder.url(url).get().build();
+        Request request = builder.url(url).get().tag(tag).build();
         Call call = sOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -108,7 +109,7 @@ public class OkHttpNetManager implements INetManager {
 
                     int bufferLen = 0;
 
-                    while ((bufferLen = is.read(buffer)) != -1) {
+                    while (!call.isCanceled() && (bufferLen = is.read(buffer)) != -1) {
                         os.write(buffer, 0, bufferLen);
                         os.flush();
                         curLen += bufferLen;
@@ -120,6 +121,10 @@ public class OkHttpNetManager implements INetManager {
                                 callBack.progress((int) (finalCurLen * 1.0f / totalLen * 100));
                             }
                         });
+                    }
+
+                    if (call.isCanceled()){
+                        return;
                     }
 
                     try {
@@ -138,6 +143,9 @@ public class OkHttpNetManager implements INetManager {
                     });
 
                 } catch (final Throwable e) {
+                    if (call.isCanceled()){
+                        return;
+                    }
                     e.printStackTrace();
                     sHandler.post(new Runnable() {
                         @Override
@@ -155,5 +163,28 @@ public class OkHttpNetManager implements INetManager {
                 }
             }
         });
+    }
+
+    @Override
+    public void cacel(Object tag) {
+//        排队的call
+        List<Call> queuedCalls = sOkHttpClient.dispatcher().queuedCalls();
+        if (queuedCalls != null) {
+            for(Call call : queuedCalls) {
+                if (tag.equals(call.request().tag())) {
+                    call.cancel();
+                }
+            }
+        }
+
+//        正在执行的call
+        List<Call> runningCalls = sOkHttpClient.dispatcher().runningCalls();
+        if (runningCalls != null) {
+            for(Call call : runningCalls) {
+                if (tag.equals(call.request().tag())) {
+                    call.cancel();
+                }
+            }
+        }
     }
 }

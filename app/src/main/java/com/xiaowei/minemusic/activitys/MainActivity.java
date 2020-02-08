@@ -92,7 +92,7 @@ public class MainActivity extends BaseActivity {
                 throwable.printStackTrace();
                 Toast.makeText(MainActivity.this, "版本更新接口请求失败", Toast.LENGTH_SHORT).show();
             }
-        });
+        },MainActivity.this);
     }
 
     private void initData () {
@@ -132,5 +132,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mRealmHelp.close();
+
+        AppUpdater.getInstance().getNetManager().cacel(this);
     }
 }

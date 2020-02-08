@@ -12,6 +12,13 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class AppUtils {
     public static long getVersionCode(Context context) {
@@ -49,5 +56,43 @@ public class AppUtils {
 //        需要做版本适配
 //        N FileProvider
 //        O INSTALL PERMISSION 的适配
+    }
+
+    /**
+     * 获取md5值的算法
+     * @param targetFile
+     * @return
+     */
+    public static String getFileMd5(File targetFile) {
+
+        if (targetFile == null || !targetFile.isFile()) {
+            return null;
+        }
+
+        MessageDigest digest = null;
+        FileInputStream in = null;
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+            in = new FileInputStream(targetFile);
+            while ((len = in.read(buffer)) != -1) {
+                digest.update(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        byte[] result = digest.digest();
+        BigInteger bigInt = new BigInteger(1, result);
+        return bigInt.toString(16);
     }
 }
