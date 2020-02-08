@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity {
 
         initData();
         initView();
-        checkVersion();
+//        checkVersion();
     }
 
     private void checkVersion() {
