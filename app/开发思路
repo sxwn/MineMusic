@@ -140,6 +140,33 @@ Android O 对应用安装进行的权限的限制
 Android P对http网络请求的约束
 在Android P上,默认不允许直接使用http的请求,需要使用https,会给出解决方案
 
+9.0权限检测
+uid pid
+uid:本视是linux权限系统中用于区分用户身份的标识,由于安卓是单一用户权限系统,uid在安装里面又可以理解为应用的标识id,该id
+自安装之日起就被分配,始终如一
+pid:顾名思义就是进程唯一标识id,用于和远程服务交互
 
+appId  callerId
+appId:和uid一样,只是本地应用在远程服务中的叫法
+callerId:请求服务者的身份Id,可以是本地应用的身份Id,也可以是远程服务的身份标识Id
+
+如何查看andorid.jar中隐藏的Api
+github有人去除Android.jar中的@hide注解
+http://github.com/anggrayudi/android-hidden-api
+
+下载对应API版本android.jar
+替换SDK/platforms/android-版本/Android.jar
+重新打开IDE可以查看
+
+危险权限:
+SMS             子权限:SEND_SMS  RECEIVE_SMS READ_SMS RECEIVER_WAP_PUSH
+STORAGE                READ_EXTERNAL_STORE   WRITE_EXTERNAL_STORE
+CONTACTS               READ_CONTACTS   WRITE_CONTACTS  GET_ACCOUNTS
+PHONE                  READ_PHONE_STATE  CALL_PHONE READ_CALL_LOG  WRITE_CALL_LOG
+CALENDAR               RRED_CALENDAR    WRITE_CALENDAR
+CAMERA                 CAMERA
+LOCATION               ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION
+BODY_SENSORS           BODY_SENSORS
+MICROPHONE(麦克风)     RECORD_AUDIO
 
 

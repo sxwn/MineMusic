@@ -1,11 +1,14 @@
 package com.xiaowei.minemusic.activitys;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,6 +45,11 @@ public class MainActivity extends BaseActivity {
         initData();
         initView();
 //        checkVersion();
+        checkPermission();
+    }
+
+    private void checkPermission() {
+
     }
 
     private void checkVersion() {
