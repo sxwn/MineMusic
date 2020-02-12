@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.xiaowei.libpermission.PermissionGrant;
 import com.xiaowei.minemusic.R;
 import com.xiaowei.minemusic.adapters.MusicGridAdapter;
 import com.xiaowei.minemusic.adapters.MusicListAdapter;
@@ -50,6 +51,11 @@ public class MainActivity extends BaseActivity {
 
     private void checkPermission() {
 
+    }
+
+    @PermissionGrant(1)
+    private void onRequestWriteStorageGranted() {
+        Toast.makeText(MainActivity.this, "写权限已申请", Toast.LENGTH_SHORT).show();
     }
 
     private void checkVersion() {

@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':libpermission', ':libcompiler'
 rootProject.name='MineMusic'
