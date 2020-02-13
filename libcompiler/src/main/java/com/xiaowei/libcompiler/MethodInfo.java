@@ -28,6 +28,8 @@ public class MethodInfo {
     public void generateJavaCode() {
         StringBuilder builder = new StringBuilder();
         builder.append("// generate code. do not modify\n");
-//        builder.append("package ")
+        builder.append("package ").append(packageName).append(";\n\n");
+        builder.append("import ");
+
     }
 }

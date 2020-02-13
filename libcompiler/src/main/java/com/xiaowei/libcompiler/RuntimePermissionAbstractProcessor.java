@@ -72,7 +72,7 @@ public class RuntimePermissionAbstractProcessor extends AbstractProcessor {
 
             MethodInfo methodInfo = methodMap.get(className);
             if (methodInfo == null) {
-                methodInfo = new MethodInfo();
+                methodInfo = new MethodInfo((Elements) element, enclosingElement);
                 methodMap.put(className, methodInfo);
             }
 
