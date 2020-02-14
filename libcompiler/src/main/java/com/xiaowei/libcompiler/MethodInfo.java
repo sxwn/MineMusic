@@ -9,9 +9,9 @@ import javax.lang.model.util.Elements;
 public class MethodInfo {
 
     private static final String PROXY_NAME = "PermissionProxy";
-    private String fileName;
+    public String fileName;
 
-    private String packageName;
+    public String packageName;
     private String className;
     public HashMap<Integer, String> grantMethodMap = new HashMap<>();
     public HashMap<Integer, String> deniedMethodMap = new HashMap<>();
@@ -25,11 +25,64 @@ public class MethodInfo {
         fileName = className +"$$" + PROXY_NAME;
     }
 
-    public void generateJavaCode() {
+    public String generateJavaCode() {
         StringBuilder builder = new StringBuilder();
         builder.append("// generate code. do not modify\n");
         builder.append("package ").append(packageName).append(";\n\n");
-        builder.append("import ");
+        builder.append("import com.xiaowei.libpermissionhelper.*;");
+        builder.append("\n");
 
+        builder.append("public class ").append(fileName).append(" implement "+PROXY_NAME+"<"+className+">");
+        builder.append(" {\n");
+
+        generateMethods(builder);
+        builder.append("\n");
+
+        builder.append(" }\n");
+
+        return builder.toString();
+    }
+
+    private void generateMethods(StringBuilder builder) {
+        generateGrantMethod(builder);
+        generateDeniedMethod(builder);
+        generateRationalMethod(builder);
+    }
+    private void generateGrantMethod(StringBuilder builder) {
+        builder.append("@Override\n");
+        builder.append("public void grant(int requestCode," + className +  " source, String[] permissions) {\n");
+        builder.append("switch(requestCode){");
+        for (int requestCode : grantMethodMap.keySet()) {
+            builder.append("case "+requestCode+":");
+            builder.append("source."+grantMethodMap.get(requestCode) + "(permissions);");
+            builder.append("break;");
+        }
+        builder.append("}");
+        builder.append(" }\n");
+    }
+    private void generateDeniedMethod(StringBuilder builder) {
+        builder.append("@Override\n");
+        builder.append("public void denied(int requestCode," + className + " source, String[] permissions) {\n");
+        builder.append("switch(requestCode){");
+        for (int requestCode : deniedMethodMap.keySet()) {
+            builder.append("case "+requestCode+":");
+            builder.append("source."+deniedMethodMap.get(requestCode) + "(permissions);");
+            builder.append("break;");
+        }
+        builder.append("}");
+        builder.append(" }\n");
+    }
+    private void generateRationalMethod(StringBuilder builder) {
+        builder.append("@Override\n");
+        builder.append("public void rational(int requestCode," + className + " source, String[] permissions) {\n");
+        builder.append("switch(requestCode){");
+        for (int requestCode : deniedMethodMap.keySet()) {
+            builder.append("case "+requestCode+":");
+            builder.append("source."+deniedMethodMap.get(requestCode) + "(permissions);");
+            builder.append("return true;");
+        }
+        builder.append("}\n");
+        builder.append("return false;");
+        builder.append("}");
     }
 }

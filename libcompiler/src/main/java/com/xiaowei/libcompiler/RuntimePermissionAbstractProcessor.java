@@ -5,6 +5,8 @@ import com.xiaowei.libpermission.PermissionDenied;
 import com.xiaowei.libpermission.PermissionGrant;
 import com.xiaowei.libpermission.PermissionRational;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -23,6 +26,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 
 /**
  * 注解处理器
@@ -33,6 +37,7 @@ public class RuntimePermissionAbstractProcessor extends AbstractProcessor {
     private Messager messager;
 
     private HashMap<String, MethodInfo> methodMap = new HashMap<>();
+    private Filer filer;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -40,6 +45,7 @@ public class RuntimePermissionAbstractProcessor extends AbstractProcessor {
 
         elementUtils = processingEnv.getElementUtils();
         messager = processingEnv.getMessager();
+        filer = processingEnv.getFiler();
     }
 
     @Override
@@ -50,12 +56,28 @@ public class RuntimePermissionAbstractProcessor extends AbstractProcessor {
         if(!handleAnnotationInfo(roundEnv, PermissionGrant.class)) {
             return false;
         };
-        if(handleAnnotationInfo(roundEnv, PermissionDenied.class)) {
+        if(!handleAnnotationInfo(roundEnv, PermissionDenied.class)) {
             return false;
         };
-        if(handleAnnotationInfo(roundEnv, PermissionRational.class)) {
+        if(!handleAnnotationInfo(roundEnv, PermissionRational.class)) {
             return false;
         };
+
+        for (String className : methodMap.keySet()) {
+            MethodInfo methodInfo = methodMap.get(className);
+            try {
+                JavaFileObject sourceFile = filer.createSourceFile(methodInfo.packageName + "." + methodInfo.fileName);
+                Writer writer = sourceFile.openWriter();
+                writer.write(methodInfo.generateJavaCode());
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                messager.printMessage(Diagnostic.Kind.NOTE, "write file failed:" + e.getMessage());
+            }
+        }
+
+        messager.printMessage(Diagnostic.Kind.NOTE, "process end ...");
 
         return false;
     }
@@ -72,7 +94,7 @@ public class RuntimePermissionAbstractProcessor extends AbstractProcessor {
 
             MethodInfo methodInfo = methodMap.get(className);
             if (methodInfo == null) {
-                methodInfo = new MethodInfo((Elements) element, enclosingElement);
+                methodInfo = new MethodInfo(elementUtils, enclosingElement);
                 methodMap.put(className, methodInfo);
             }
 
@@ -80,18 +102,15 @@ public class RuntimePermissionAbstractProcessor extends AbstractProcessor {
             String methodName = methodElement.getSimpleName().toString();
             List<? extends VariableElement> parameters = methodElement.getParameters();
 
+            if (parameters == null || parameters.size() < 1) {
+                String message = "the method %s marked by annotation %s must have an nuique parameter [String[] permissions]";
+                throw new IllegalArgumentException(String.format(message, methodName, annotationClazz.getClass().getSimpleName()));
+            }
+
             if (annotationClazz instanceof PermissionGrant) {
-                if (parameters == null || parameters.size() < 1) {
-                    String message = "the method %s marked by annotation %s must have an nuique parameter [String[] permissions]";
-                    throw new IllegalArgumentException(String.format(message, methodName, annotationClazz.getClass().getSimpleName()));
-                }
                 int requestCode = ((PermissionGrant) annotationClazz).value();
                 methodInfo.grantMethodMap.put(requestCode, methodName);
             } else if (annotationClazz instanceof PermissionDenied) {
-                if (parameters == null || parameters.size() < 1) {
-                    String message = "the method %s marked by annotation %s must have an nuique parameter [String[] permissions]";
-                    throw new IllegalArgumentException(String.format(message, methodName, annotationClazz.getClass().getSimpleName()));
-                }
                 int requestCode = ((PermissionDenied) annotationClazz).value();
                 methodInfo.deniedMethodMap.put(requestCode, methodName);
             } else if (annotationClazz instanceof PermissionRational) {

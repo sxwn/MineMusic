@@ -1,6 +1,8 @@
 package com.xiaowei.minemusic.activitys;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +16,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.xiaowei.libpermission.PermissionDenied;
 import com.xiaowei.libpermission.PermissionGrant;
+import com.xiaowei.libpermission.PermissionRational;
+import com.xiaowei.libpermissionhelper.PermissionProxy;
 import com.xiaowei.minemusic.R;
 import com.xiaowei.minemusic.adapters.MusicGridAdapter;
 import com.xiaowei.minemusic.adapters.MusicListAdapter;
@@ -31,6 +36,8 @@ import com.xiaowei.minemusic.views.GridSpaceItemDecoration;
 import java.io.File;
 
 public class MainActivity extends BaseActivity {
+
+    public static final int RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE = 101;
 
     private RecyclerView mRvGrid,mRvList;
     private MusicGridAdapter mGridAdapter;
@@ -53,9 +60,26 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    @PermissionGrant(1)
+    @PermissionGrant(RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)
     private void onRequestWriteStorageGranted() {
         Toast.makeText(MainActivity.this, "写权限已申请", Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionDenied(RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)
+    private void onRequestWriteStorageDenied() {
+        Toast.makeText(MainActivity.this, "写权限被拒绝", Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionRational(RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)
+    private void onRequestWriteStorageRational() {
+        new AlertDialog.Builder(this).setTitle("权限授权申请")
+                .setMessage("请授予一下权限,以继续功能的使用\n\n" + "设备存储的权限")
+                .setPositiveButton("好的", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).create().show();
     }
 
     private void checkVersion() {
