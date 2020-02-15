@@ -35,7 +35,7 @@ import com.xiaowei.minemusic.views.GridSpaceItemDecoration;
 
 import java.io.File;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity{
 
     public static final int RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE = 101;
 
@@ -53,35 +53,7 @@ public class MainActivity extends BaseActivity {
         initData();
         initView();
 //        checkVersion();
-        checkPermission();
     }
-
-    private void checkPermission() {
-
-    }
-
-    @PermissionGrant(RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)
-    private void onRequestWriteStorageGranted() {
-        Toast.makeText(MainActivity.this, "写权限已申请", Toast.LENGTH_SHORT).show();
-    }
-
-    @PermissionDenied(RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)
-    private void onRequestWriteStorageDenied() {
-        Toast.makeText(MainActivity.this, "写权限被拒绝", Toast.LENGTH_SHORT).show();
-    }
-
-    @PermissionRational(RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)
-    private void onRequestWriteStorageRational() {
-        new AlertDialog.Builder(this).setTitle("权限授权申请")
-                .setMessage("请授予一下权限,以继续功能的使用\n\n" + "设备存储的权限")
-                .setPositiveButton("好的", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).create().show();
-    }
-
     private void checkVersion() {
         AppUpdater.getInstance().getNetManager().get("http://59.110.162.30/app_updater_version.json", new INetCallBack() {
             @Override
