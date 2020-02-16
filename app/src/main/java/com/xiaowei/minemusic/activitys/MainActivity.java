@@ -37,8 +37,6 @@ import java.io.File;
 
 public class MainActivity extends BaseActivity{
 
-    public static final int RESULT_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE = 101;
-
     private RecyclerView mRvGrid,mRvList;
     private MusicGridAdapter mGridAdapter;
     private MusicListAdapter mListAdapter;
